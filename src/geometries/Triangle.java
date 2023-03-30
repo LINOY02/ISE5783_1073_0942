@@ -4,7 +4,7 @@ import primitives.Point;
 
 /**
  * A class that represents a triangle in the plane and inherits from class Polygon
- * @author Tamar
+ * @author Tamar and Linoy
  *
  */
 public class Triangle extends Polygon

@@ -5,7 +5,7 @@ import primitives.Vector;
 
 /**
  * A class that represents a plane in space by a point and a vector normal to the plane
- * @author Tamar
+ * @author Tamar and Linoy
  *
  */
 public class Plane implements Geometry

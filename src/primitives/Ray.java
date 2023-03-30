@@ -35,7 +35,8 @@ public class Ray
    * getter of the field p0
    * @return the head point of the ray
    */
-public Point getP0() {
+public Point getP0() 
+{
 	return p0;
 }
 
@@ -43,7 +44,8 @@ public Point getP0() {
  * getter of the filed dir
  * @return the direction vector of the ray
  */
-public Vector getDir() {
+public Vector getDir() 
+{
 	return dir;
 }
 }

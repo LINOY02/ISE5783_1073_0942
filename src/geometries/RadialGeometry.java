@@ -2,7 +2,7 @@ package geometries;
 
  /**
   * An abstract class that represents 3D shapes with a radius that implements the Geometry interface
-  * @author Tamar
+  * @author Tamar and Linoy
   *
   */
 public abstract class RadialGeometry implements Geometry

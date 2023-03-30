@@ -6,7 +6,7 @@ import primitives.Vector;
 
 /**
  * A class that represents Tube space and inherits from a RadialGeometry class
- * @author Tamar
+ * @author Tamar and Linoy
  *
  */
 public class Tube extends RadialGeometry

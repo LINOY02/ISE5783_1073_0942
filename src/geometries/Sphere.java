@@ -5,7 +5,7 @@ import primitives.Vector;
 
 /**
  * A class that represents a Sphere in space and inherits from RadialGeometry class
- * @author Tamar
+ * @author Tamar and Linoy
  *
  */
 public class Sphere extends RadialGeometry

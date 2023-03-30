@@ -6,7 +6,7 @@ import primitives.Vector;
 
 /**
  *  A class that represents Cylinder space and inherits from a Tube class
- * @author Tamar
+ * @author Tamar and Linoy
  *
  */
 public class Cylinder extends Tube
