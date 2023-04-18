@@ -90,7 +90,7 @@ public double distanceSquared(Point p)
  * @param p - the point
  * @return the distance between this point an the current objec
  */
-public double distanc(Point p)
+public double distance(Point p)
 {
   return Math.sqrt(this.distanceSquared(p));
 }

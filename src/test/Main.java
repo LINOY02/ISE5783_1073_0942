@@ -9,6 +9,7 @@ import primitives.Vector;
 /** Test program for the 1st stage
  * @author Tamar 213451073
  *         Linoy 213120942 */
+
  public final class Main 
   {
 

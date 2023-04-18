@@ -1,5 +1,5 @@
 package primitives;
-
+import static primitives.Util.isZero;
 public class Vector extends Point
 {
     /**
@@ -58,6 +58,8 @@ public class Vector extends Point
 	 */
 	public Vector scale(double scalar)
 	{
+		if(isZero(scalar))
+			throw new IllegalArgumentException("ERROR: Scalar can't be zero");
 		return new Vector(this.xyz.scale(scalar));
 	}
 	
