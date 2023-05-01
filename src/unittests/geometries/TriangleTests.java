@@ -42,7 +42,7 @@ class TriangleTests {
 	      assertEquals(1, result.length(), 0.00000001, "triangle's normal is not a unit vector");
 	      // ensure the result is orthogonal to all the edges
 	      for (int i = 0; i < 2; ++i)
-	         assertTrue(isZero(result.dotProduct(pts[i].subtract(pts[i == 0 ? 2 : i - 1]))),
+	    	  assertEquals(result.dotProduct(pts[i].subtract(pts[i == 0 ? 2 : i - 1])),0,0.000001,
 	                    "triangle's normal is not orthogonal to one of the edges");
 	   }
 	

@@ -11,23 +11,44 @@ import primitives.Ray;
  * @author linoy and tamar
  *
  */
-public class Geometries {
-	private List<Intersectable> intersectable;
+public class Geometries implements Intersectable{
+	private List<Intersectable> intersections;
 	
 	public Geometries(){
-		intersectable = new LinkedList<Intersectable>();
+		intersections = new LinkedList<Intersectable>();
 	}
 	public Geometries(Intersectable... geometries) {
-		intersectable = new LinkedList<Intersectable>();
-		Collections.addAll(intersectable, geometries);
+		intersections = new LinkedList<Intersectable>();
+		Collections.addAll(intersections, geometries);
 	}
 	public void add(Intersectable... geometries) {
-		Collections.addAll(intersectable, geometries);
+		Collections.addAll(intersections, geometries);
 	}
 	
+	
+	private boolean checkIntersections(Ray ray)
+	{
+		for(Intersectable shape: intersections)
+	     {
+			if(shape.findIntersections(ray) != null)
+				return true;
+	     }
+		return false;
+	}
 
     public List<Point> findIntersections(Ray ray)
     {
-    return null;
+       if(!checkIntersections(ray))
+    	   return null;
+       List<Point> points = new LinkedList<Point>();
+       for(Intersectable shape: intersections)
+         {
+    	  List<Point> temPoints = shape.findIntersections(ray);
+    	  if(temPoints != null)
+    	  {
+    		points.addAll(temPoints);
+    	  }
+          }
+       return points;
     }
 }
