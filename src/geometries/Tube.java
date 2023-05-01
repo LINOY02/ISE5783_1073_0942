@@ -4,6 +4,8 @@ import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 import static primitives.Util.isZero;
+
+import java.util.List;
 /**
  * A class that represents Tube space and inherits from a RadialGeometry class
  * @author Tamar and Linoy
@@ -38,5 +40,10 @@ public class Tube extends RadialGeometry
 		Point o = this.axisRay.getP0().add(this.axisRay.getDir().scale(t));
 		return p.subtract(o).normalize();
 	}
+	
+	  public List<Point> findIntersections(Ray ray)
+	  {
+		  return null;
+	  }
 }
  

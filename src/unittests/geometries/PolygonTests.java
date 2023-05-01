@@ -7,10 +7,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static primitives.Util.isZero;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 
 import geometries.Polygon;
 import primitives.Point;
+import primitives.Ray;
 import primitives.Vector;
 
 /** 
@@ -87,6 +90,13 @@ public class PolygonTests {
          assertTrue(isZero(result.dotProduct(pts[i].subtract(pts[i == 0 ? 3 : i - 1]))),
                     "Polygon's normal is not orthogonal to one of the edges");
    }
+   
+   /** Test method for {@link geometries.Polygon#findIntersections(primitives.Ray)}. */
+	@Test
+	List<Point> testfindIntersections(Ray ray)
+	{
+		return null;
+	}
 }
 
 

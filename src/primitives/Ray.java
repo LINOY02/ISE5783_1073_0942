@@ -1,5 +1,7 @@
 package primitives;
 
+import static primitives.Util.isZero;
+
 public class Ray 
 {
   /**
@@ -24,7 +26,8 @@ public class Ray
   }
   
   @Override
-  public boolean equals(Object obj) {
+  public boolean equals(Object obj) 
+  {
   if (this == obj) return true;
   return (obj instanceof Ray other)
   && this.p0.equals(other.p0)
@@ -48,4 +51,15 @@ public Vector getDir()
 {
 	return dir;
 }
+/**
+ * Calculation of a point on ray
+ * @param t
+ * @return
+ */
+public Point getPoint(double t)
+{
+	return p0.add(dir.scale(t));
+
+}
+		
 }

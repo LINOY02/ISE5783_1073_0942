@@ -1,6 +1,9 @@
 package geometries;
 
+import java.util.List;
+import static primitives.Util.*;
 import primitives.Point;
+import primitives.Ray;
 import primitives.Vector;
 
 /**
@@ -54,9 +57,28 @@ public class Plane implements Geometry
      * getter of the filed normal
      * @return the normal vector to the plane
      */
-	public Vector getNormal() {
+	public Vector getNormal() 
+	{
 		return normal;
 	}
 	
+	
+	  public List<Point> findIntersections(Ray ray)
+	  {
+		 Point p = ray.getP0();
+		 Vector v = ray.getDir();
+		 Vector n = getNormal();
+		 double nv = n.dotProduct(v);
+		 if (isZero(nv) || p0.equals(p)) //Checking if the beam is parallel to the plane or if it starts at the same point as the plane
+			 return null;
+		 double tmp = n.dotProduct(p0.subtract(p));
+		 double t = alignZero(tmp / n.dotProduct(v));
+         if (t > 0)
+         {
+        	 Point point = ray.getPoint(t);
+        	 return List.of(point);
+         }
+		  return null;
+	  }
 
 }
