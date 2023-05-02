@@ -35,7 +35,8 @@ class PlaneTests {
 	 * Test method for {@link geometries.Plane#getNormal(primitives.Point)}.
 	 */
 	@Test
-	void testGetNormalPoint() {
+	void testGetNormalPoint() 
+	{ 
 		
 		/// ============ Equivalence Partitions Tests ==============
         
