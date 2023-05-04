@@ -11,7 +11,7 @@ public class Vector extends Point
 	public Vector(double x, double y, double z)
     {
         super(x ,y ,z);
-        if(x==0 && y==0 && z == 0)
+        if(xyz.equals(Double3.ZERO))
   		  throw new IllegalArgumentException("ERROR: zero vector is not valid");
     }
     
@@ -19,9 +19,11 @@ public class Vector extends Point
 	 *  vector constructor with 1 parameter
      * @param xyz - Of type Double3
 	 */
-    Vector(Double3 xyz)
+    public Vector(Double3 xyz)
     {
       super(xyz);
+      if(xyz.equals(Double3.ZERO))
+		  throw new IllegalArgumentException("ERROR: zero vector is not valid");
     }
 
 	@Override
@@ -31,10 +33,7 @@ public class Vector extends Point
 
 	@Override
 	 public boolean equals(Object obj) {
-		 if (this == obj) return true;
-		 if (obj instanceof Vector other)
-			 return super.equals(other);
-		 return false;
+			 return super.equals(obj);
 	}
 
 	@Override
@@ -94,7 +93,7 @@ public class Vector extends Point
 	 */
 	public double lengthSquared()
 	{
-		return this.dotProduct(this);
+		return dotProduct(this);
 	}
 	
 	/**

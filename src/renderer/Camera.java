@@ -2,7 +2,13 @@ package renderer;
 import primitives.Point;
 import primitives.Vector;
 import primitives.Ray;
-
+import static primitives.Util.isZero;
+/**
+ * class that represent a camera
+ * 
+ * @author linoy
+ *
+ */
 public class Camera 
 {
 	private Point p0;
@@ -13,6 +19,22 @@ public class Camera
 	private double width;
 	private double distance;
 	
+    public Vector getVto() {
+        return Vto;
+    }
+
+    public Vector getVup() {
+        return Vup;
+    }
+
+    public Vector getVright() {
+        return Vright;
+    }
+
+    public Point getP0() {
+        return p0;
+    }
+    
 	/**
 	 * getter to the height of the view plane
 	 * @return height of the view plane
@@ -40,10 +62,10 @@ public class Camera
 	 * @param Vup
 	 * @param Vto
 	 */
-	public Camera(Point p0, Vector Vup, Vector Vto)
+	public Camera(Point p0, Vector Vto, Vector Vup)
 	{
 		this.p0 = p0;
-		if(Vup.dotProduct(Vto) != 0)
+		if(!isZero(Vup.dotProduct(Vto)))
 			throw new IllegalArgumentException("The vectors are not perpendicular");
 		this.Vup = Vup.normalize();
 		this.Vto = Vto.normalize();
@@ -87,19 +109,29 @@ public class Camera
 	 */
 	public Ray constructRay(int nX, int nY, int j, int i)
 	{
-		Point centerPoint =p0.add(Vto.scale(distance));
+		Point centerPoint;
+		if(isZero(distance))
+			centerPoint = p0;
+		else
+			centerPoint = p0.add(Vto.scale(distance));
 		double rX = width/nX;
 		double rY = height/nY;
-		double yI = -(i-(nY-1)/2)*rY;
-		double xJ = (j-(nX-1)/2)*rX;
+		double yI = -(i-(nY-1)/2d)*rY;
+		double xJ = (j-(nX-1)/2d)*rX;
 		Point pij = centerPoint;
-		if(xJ != 0)
+		if(!isZero(xJ))
 			pij = pij.add(Vright.scale(xJ));
-		if(yI != 0)
+		if(!isZero(yI))
 			pij = pij.add(Vup.scale(yI));
-		Ray ray = new Ray(p0, pij.subtract(p0));
-		return ray;
+		if(pij.equals(centerPoint))
+			return new Ray(p0, new Vector(pij.getX(), pij.getY(), pij.getZ()));
+		return new Ray(p0, pij.subtract(p0));
 	}
-	
+
+	@Override
+	public String toString() {
+		return "Camera [p0=" + p0 + ", Vup=" + Vup + ", Vto=" + Vto + ", Vright=" + Vright + ", height=" + height
+				+ ", width=" + width + ", distance=" + distance + "]";
+	}	
 
 }

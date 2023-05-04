@@ -24,7 +24,7 @@ public class Point
    * point constructor with 1 parameter
    * @param xyz - Of type Double3
    */
-  Point(Double3 xyz) 
+  public Point(Double3 xyz) 
   {
 	  if(xyz == Double3.ZERO)
 		  throw new IllegalArgumentException("ERROR: zero vector is not valid");

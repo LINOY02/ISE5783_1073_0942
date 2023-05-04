@@ -44,5 +44,9 @@ public class Triangle extends Polygon
       }
 	  return null;
   }
+@Override
+public String toString() {
+	return "Triangle []";
+}
   
 }

@@ -41,7 +41,7 @@ public class Plane implements Geometry
      * @param p - point
      * @param v - vector
      */
-    Plane(Point p, Vector v)
+    public Plane(Point p, Vector v)
     {
     	this.p0 = p;
     	this.normal = v.normalize();
@@ -80,5 +80,10 @@ public class Plane implements Geometry
          }
 		  return null;
 	  }
+
+	@Override
+	public String toString() {
+		return "Plane [p0=" + p0 + ", normal=" + normal + "]";
+	}
 
 }

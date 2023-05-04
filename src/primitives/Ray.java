@@ -1,7 +1,8 @@
 package primitives;
 
 import static primitives.Util.isZero;
-
+import static primitives.Util.*;
+import java.lang.Object;
 public class Ray 
 {
   /**
@@ -28,10 +29,12 @@ public class Ray
   @Override
   public boolean equals(Object obj) 
   {
-  if (this == obj) return true;
-  return (obj instanceof Ray other)
-  && this.p0.equals(other.p0)
-  && this.dir.equals(other.dir);
+  if (this == obj)
+	  return true;
+if (obj instanceof Ray other)
+return p0.equals(other.p0)
+&& dir.equals(other.dir);
+return false;
   }
 
   /**
@@ -59,7 +62,11 @@ public Vector getDir()
 public Point getPoint(double t)
 {
 	return p0.add(dir.scale(t));
-
 }
-		
+
+@Override
+public String toString() {
+	return "Ray [p0=" + p0 + ", dir=" + dir + "]";
+}
+	
 }

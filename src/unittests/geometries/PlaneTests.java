@@ -4,7 +4,6 @@
 package unittests.geometries;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static primitives.Util.isZero;
 
 import java.util.List;
 
