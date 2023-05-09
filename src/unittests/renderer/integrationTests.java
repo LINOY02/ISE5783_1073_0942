@@ -16,36 +16,48 @@ import geometries.Triangle;
  *
 */
 class integrationTests {
-/**
- * 
- * @param expected
- * @param cam
- * @param geo
- * @param nX
- * @param nY
- */
+
+	/**
+    This method asserts that the expected number of intersections between a given camera and a collection of intersectable geometries
+	is equal to the actual number of intersections found.
+	@param exp - the expected number of intersections.
+	@param camera - the camera from which rays are shot to find intersections.
+	@param geometries - the collection of intersectable geometries to test for intersections.
+	@param nX - the number of columns in the viewplane.
+	@param nY - the number of rows in the viewplane.
+	@throws AssertionError if the expected number of intersections is not equal to the actual number of intersections found.
+	*/
 private void assertIntersections(int exp, Camera camera, Intersectable geometries, int nX, int nY) 
 {
-
-     List<Point> points = new LinkedList<>();
-     camera.setVPSize(3, 3);
-     camera.setVPDistance(1);
-     for (int i = 0; i < nY; ++i) 
-     {
-    	 for (int j = 0; j < nX; ++j) 
-    	 {
-    		 var intersections = geometries.findIntersections(camera.constructRay(nX, nY, j, i));
-              if (intersections != null) 
-              {
-            	  points.addAll(intersections);                 
-	          }
-    	 }
-     }
-	        assertEquals(exp, points.size(), "Wrong amount of intersections");
-	    }
-	    /**
-	     * Integration tests of Camera Ray construction with Ray-Sphere intersections
-	     */
+	int counter = 0;
+    List<Point> points = null;
+    // set the size and distance of the view plane
+    camera.setVPSize(3, 3);
+    camera.setVPDistance(1);
+    // Go through each pixel in the view plane
+    for (int i = 0; i < nY; ++i) 
+    {
+    	for (int j = 0; j < nX; ++j) 
+           {
+             var intersections = geometries.findIntersections(camera.constructRay(nX, nY, j, i));
+                 if (intersections != null) // in case there are intersections
+                   {
+                      if (points == null) // check that the list of points has been initialized
+                          points = new LinkedList<>();
+                      points.addAll(intersections); // add all the new points to the list               
+                   }
+           }
+    }
+    // the amount of points in the intersections
+    if(points == null )
+    	counter = 0;
+    else 
+		counter = points.size();
+    assertEquals(exp, counter, "Wrong amount of intersections");// run the test
+}
+/**
+ * * Integration tests of Camera Ray construction with Ray-Sphere intersections
+ * */
 @Test
 public void SphereIntegration() {
 
@@ -62,6 +74,12 @@ public void SphereIntegration() {
     //TC05: Beyond Sphere 0 points
     assertIntersections(0, cam1, new Sphere(0.5, new Point(0, 0, 1)), 3, 3);
     }
+
+/**
+
+ * Integration tests of Camera Ray construction with Ray-Plane intersections
+
+ */
 	@Test
     public void planeIntegration() {
 
@@ -75,6 +93,11 @@ public void SphereIntegration() {
      assertIntersections(6, cam, new Plane(new Point(0, 0, -3), new Vector(0, -1, 1)), 3, 3);
 	    }
 
+	/**
+
+     * Integration tests of Camera Ray construction with Ray-Triangle intersections
+
+     */
 	 @Test
       public void triangleIntegration() {
 

@@ -62,22 +62,29 @@ public class Plane implements Geometry
 		return normal;
 	}
 	
-	
-	  public List<Point> findIntersections(Ray ray)
-	  {
+	/**
+     Finds the intersection point of a given ray with this Plane.
+     @param ray The ray to find the intersection point with.
+     @return A list containing the intersection point, or null if there is no intersection.
+	*/
+	 public List<Point> findIntersections(Ray ray)
+	 {
 		 Point p = ray.getP0();
 		 Vector v = ray.getDir();
 		 Vector n = getNormal();
 		 double nv = n.dotProduct(v);
 		 if (isZero(nv) || p0.equals(p)) //Checking if the beam is parallel to the plane or if it starts at the same point as the plane
 			 return null;
+		// Calculate the distance from the ray's starting point to the intersection point with this plane
 		 double tmp = n.dotProduct(p0.subtract(p));
-		 double t = alignZero(tmp / n.dotProduct(v));
+		 double t = alignZero(tmp / nv);
+		// If the intersection point is in front of the camera return it
          if (t > 0)
          {
         	 Point point = ray.getPoint(t);
         	 return List.of(point);
          }
+      // If there is no intersection point
 		  return null;
 	  }
 

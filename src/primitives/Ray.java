@@ -26,15 +26,14 @@ public class Ray
 	  this.dir = dir.normalize();
   }
   
-  @Override
-  public boolean equals(Object obj) 
-  {
+@Override
+public boolean equals(Object obj) 
+{
   if (this == obj)
 	  return true;
-if (obj instanceof Ray other)
-return p0.equals(other.p0)
-&& dir.equals(other.dir);
-return false;
+  if (obj instanceof Ray other)
+      return p0.equals(other.p0) && dir.equals(other.dir);
+  return false;
   }
 
   /**

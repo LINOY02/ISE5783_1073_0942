@@ -6,7 +6,7 @@ import static primitives.Util.isZero;
 /**
  * class that represent a camera
  * 
- * @author linoy
+ * @author linoy and Tamar
  *
  */
 public class Camera 
@@ -19,21 +19,6 @@ public class Camera
 	private double width;
 	private double distance;
 	
-    public Vector getVto() {
-        return Vto;
-    }
-
-    public Vector getVup() {
-        return Vup;
-    }
-
-    public Vector getVright() {
-        return Vright;
-    }
-
-    public Point getP0() {
-        return p0;
-    }
     
 	/**
 	 * getter to the height of the view plane
@@ -100,22 +85,26 @@ public class Camera
 	}
 	
 	/**
-	 * 
-	 * @param nX - row width
-	 * @param nY - column height
-	 * @param j - the column of the pixel
-	 * @param i - The row of the pixel
-	 * @return
-	 */
+
+	Constructs a ray from a camera position to a specific pixel in the view plane.
+    @param nX The number of pixels in the x direction in the view plane.
+    @param nY The number of pixels in the y direction in the view plane.
+    @param j The x coordinate of the pixel in the view plane.
+    @param i The y coordinate of the pixel in the view plane.
+    @return A ray from the camera position to the specified pixel in the view plane.
+	*/
 	public Ray constructRay(int nX, int nY, int j, int i)
 	{
+		// Calculate the center point of the view plane
 		Point centerPoint;
 		if(isZero(distance))
 			centerPoint = p0;
 		else
 			centerPoint = p0.add(Vto.scale(distance));
+		// Calculate the size of each pixel in the view plane
 		double rX = width/nX;
 		double rY = height/nY;
+		// Calculate the position of the specified pixel on the view plane
 		double yI = -(i-(nY-1)/2d)*rY;
 		double xJ = (j-(nX-1)/2d)*rX;
 		Point pij = centerPoint;

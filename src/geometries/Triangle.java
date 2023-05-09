@@ -11,6 +11,7 @@ import primitives.Vector;
  * @author Tamar and Linoy
  *
  */
+
 public class Triangle extends Polygon
 {
   /**
@@ -23,19 +24,30 @@ public class Triangle extends Polygon
   {
 	  super(p1, p2, p3);
   }
+  
+  /**
+
+  Find the intersection points of a ray with a triangle.
+  @param ray The ray to intersect with the triangle.
+  @return A list of intersection points between the ray and the triangle, or null if there are no intersections.
+  */
   public List<Point> findIntersections(Ray ray)
   {
 	  Point p = ray.getP0();
 	  Vector v = ray.getDir();
+	 // calculate the three edges of the triangle
       Vector v1 = vertices.get(0).subtract(p);
       Vector v2 = vertices.get(1).subtract(p);
       Vector v3 = vertices.get(2).subtract(p);
+     // calculate the three edges of the triangle
       Vector n1 = (v1.crossProduct(v2)).normalize();
       Vector n2 = (v2.crossProduct(v3)).normalize();
       Vector n3 = (v3.crossProduct(v1)).normalize();
+    // calculate the dot products of the ray direction with the three normals
       double d1 = alignZero(v.dotProduct(n1));
       double d2 = alignZero(v.dotProduct(n2));
       double d3 = alignZero(v.dotProduct(n3));
+     // calculate the dot products of the ray direction with the three normals
       if((d1>0 && d2>0 && d3>0) || (d1<0 && d2<0 && d3<0))
       {
     	  List<Point> list = plane.findIntersections(ray);

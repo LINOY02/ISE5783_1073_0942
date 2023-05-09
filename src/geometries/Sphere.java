@@ -37,24 +37,29 @@ public class Sphere extends RadialGeometry
 	}
 	
 	/**
-	 * find Intersections
-	 * @param ray - Ray
-	 */
+
+	Finds the intersections of a given ray with this sphere.
+	@param ray The ray to find intersections with.
+	@return A list of intersection points, or null if there are no intersections.
+	*/
 	public List<Point> findIntersections(Ray ray)
 	  {
 		 Point p = ray.getP0();
 		 Vector v = ray.getDir();
+		// If the ray starts at the center of the sphere
 	     if (p.equals(center)) 
 	     {
 	        return List.of(center.add(v.scale(radius)));
 	     }
 	     Vector u = center.subtract(p);
 	     double tm = alignZero(v.dotProduct(u));
+	     //Calculation of the length of the perpendicular according to Pythagoras
 	     double d = alignZero(Math.sqrt(u.lengthSquared() - tm * tm));
 	     if (d >= radius) //there are no intersections
 	     {
 	         return null;
 	     }
+	     //Calculation of the length of the perpendicular according to Pythagoras
 	     double th = alignZero(Math.sqrt(radius * radius - d * d));
 	     double t1 = alignZero(tm - th);
 	     double t2 = alignZero(tm + th);

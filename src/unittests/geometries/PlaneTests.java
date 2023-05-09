@@ -39,8 +39,7 @@ class PlaneTests {
 		
 		/// ============ Equivalence Partitions Tests ==============
         
-	      Point[] pts =
-	          { new Point(0, 0, 1), new Point(1, 0, 0), new Point(0, 1, 0) };
+	      Point[] pts = { new Point(0, 0, 1), new Point(1, 0, 0), new Point(0, 1, 0) };
 	       Plane plan = new Plane(new Point(0, 0, 1), new Point(1, 0, 0), new Point(0, 1, 0));
 	       // ensure there are no exceptions
 	       assertDoesNotThrow(() -> plan.getNormal(new Point(0, 0, 1)), "");
