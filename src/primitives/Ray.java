@@ -3,6 +3,7 @@ package primitives;
 import static primitives.Util.isZero;
 import static primitives.Util.*;
 import java.lang.Object;
+import java.util.List;
 public class Ray 
 {
   /**
@@ -62,6 +63,33 @@ public Point getPoint(double t)
 {
 	return p0.add(dir.scale(t));
 }
+
+/**
+Finds the closest point to a given point within a list of points.
+@param points The list of points to search for the closest point.
+@return The closest point to the given point, or null if the list is empty.
+*/
+public Point findClosestPoint(List<Point> points)
+{
+	Point closetPoint = null;
+	double dis = Double.MAX_VALUE;
+	double tempDis;
+	
+	if(points.isEmpty()) //check if the list is empty
+		return null;
+	
+	for (Point point : points) //going through all the points in the list
+	{
+		tempDis = p0.distance(point);
+		if(tempDis < dis) //check if this point closer to the head of the ray
+		{
+			closetPoint = point;
+			dis = tempDis;
+		}
+	}
+	return closetPoint;
+}
+
 
 @Override
 public String toString() {

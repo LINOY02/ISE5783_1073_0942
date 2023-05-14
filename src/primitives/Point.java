@@ -8,6 +8,7 @@ public class Point
    * A field of type Double3 to specify a point
    */
   Double3 xyz;
+  public static final Point ZERO = new Point(0, 0, 0);
   
   /**
    * point constructor with 3 parameters
@@ -88,7 +89,7 @@ public double distanceSquared(Point p)
 /**
  *  the function get a point and calculate the distance
  * @param p - the point
- * @return the distance between this point an the current objec
+ * @return the distance between this point an the current obj
  */
 public double distance(Point p)
 {
