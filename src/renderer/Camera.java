@@ -1,12 +1,17 @@
 package renderer;
 import primitives.Point;
+import java.util.*;
 import primitives.Vector;
-import primitives.Ray;
+import primitives.*;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static primitives.Util.isZero;
+
+import java.util.MissingResourceException;
 /**
  * class that represent a camera
  * 
- * @author linoy and Tamar
+ * @author Linoy and Tamar
  *
  */
 public class Camera 
@@ -18,6 +23,9 @@ public class Camera
 	private double height;
 	private double width;
 	private double distance;
+	private ImageWriter imageWriter;
+	private RayTracerBase rayTracer;
+	
 	
     
 	/**
@@ -85,8 +93,27 @@ public class Camera
 	}
 	
 	/**
+	 * the function set the parameter of the Image Writer
+	 * @param imageWriter
+	 * @return this camera
+	 */
+	public Camera setImageWriter(ImageWriter imageWriter) {
+		this.imageWriter = imageWriter;
+		return this;
+	}
+	
+	/**
+	 * the function set the parameter of the rayTracer
+	 * @param rayTracer
+	 * @return this camera
+	 */
+	public Camera setRayTracer(RayTracerBase rayTracer) {
+		this.rayTracer = rayTracer;
+		return this;
+	}	
 
-	Constructs a ray from a camera position to a specific pixel in the view plane.
+	/**
+    Constructs a ray from a camera position to a specific pixel in the view plane.
     @param nX The number of pixels in the x direction in the view plane.
     @param nY The number of pixels in the y direction in the view plane.
     @param j The x coordinate of the pixel in the view plane.
@@ -116,11 +143,100 @@ public class Camera
 			return new Ray(p0, new Vector(pij.getX(), pij.getY(), pij.getZ()));
 		return new Ray(p0, pij.subtract(p0));
 	}
+	
+	/**
+	 * Renders an image by casting rays through each pixel and calculating the color of the closest intersection.
+	 * Throws a MissingResourceException if any required resources are missing.
+	 */
+	public void renderImage()
+	{
+		// check if some of the parameters are missing
+		if(p0 == null)
+			throw new MissingResourceException("point p0 is missing","Camera", "p0");
+		if(Vup == null)
+			throw new MissingResourceException("vector Vup is missing","Camera", "Vup");
+		if(Vright == null)
+			throw new MissingResourceException("vector Vright is missing","Camera", "Vright");
+		if(Vto == null)
+			throw new MissingResourceException("vector Vto is missing","Camera", "Vto");
+		if(height == 0)
+			throw new MissingResourceException("height is missing","Camera", "height");
+		if(width == 0)
+			throw new MissingResourceException("width is missing","Camera", "width");
+		if(distance == 0)
+			throw new MissingResourceException("distance is missing","Camera", "distance");
+		if(imageWriter == null)
+			throw new MissingResourceException("image writer is missing", "Camera", "imageWriter");
+		if(rayTracer == null)
+			throw new MissingResourceException("ray tracer is missing", "Camera", "rayTracer");
+		
+		// if all the parameters are not missing, paint each pixel
+		for (int i = 0; i < imageWriter.getNx(); i++)
+		{
+			for (int j = 0; j < imageWriter.getNy(); j++)
+			{
+				    imageWriter.writePixel(i, j, castRay(imageWriter.getNx(), imageWriter.getNy(), j, i));
+			}
+		}
+	}
+
+	/**
+	 * Prints a grid of a given color onto the image. The grid is formed by coloring every nth horizontal and vertical pixel.
+	 * Throws a MissingResourceException if the image writer is missing.
+	 * @param interval The interval between two colored pixels in the grid.
+	 * @param color    The color to use for the grid.
+	 */
+	public void printGrid(int interval , Color color )
+	{
+		// check that the image writer is not missing
+		if(imageWriter == null)
+			throw new MissingResourceException("image writer is missing", "Camera", "imageWriter");
+		
+		// paint all the pixels in the grid
+		for (int i = 0; i < imageWriter.getNx(); i++)
+		{
+			for (int j = 0; j < imageWriter.getNy(); j++)
+			{
+				if (j % interval == 0 || i % interval == 0)
+				    imageWriter.writePixel(i, j, color);
+			}
+		}
+	}
+	
+	
+	/**
+	 * Writes the rendered image to a file using the image writer. 
+	 * Throws a MissingResourceException if the image writer is missing.
+	 */
+	public void writeToImage()
+	{
+		if(imageWriter == null)
+			throw new MissingResourceException("image writer is missing", "Camera", "imageWriter");
+		imageWriter.writeToImage();//delegation
+	}
+	
+	/**
+	 * Casts a ray from the camera towards the given pixel coordinates (i,j) and returns the color of the object that the ray intersects with. 
+	 * The function constructs a ray using the camera's parameters and the given pixel coordinates, and then traces the ray using the ray tracer. 
+	 * @param nX The number of pixels in the x direction.
+	 * @param nY The number of pixels in the y direction.
+	 * @param i The x-coordinate of the pixel.
+	 * @param j The y-coordinate of the pixel.
+	 * @return The color of the object that the ray intersects with.
+	 */
+	private Color castRay(int nX, int nY, int i, int j)
+	{
+		// construct a ray through the pixel
+		Ray ray = constructRay(nX, nY, j, i);
+		// find the color of the pixel and return it
+		return rayTracer.traceRay(ray);
+	}
 
 	@Override
 	public String toString() {
 		return "Camera [p0=" + p0 + ", Vup=" + Vup + ", Vto=" + Vto + ", Vright=" + Vright + ", height=" + height
 				+ ", width=" + width + ", distance=" + distance + "]";
-	}	
-
+	}
+	
+	
 }
