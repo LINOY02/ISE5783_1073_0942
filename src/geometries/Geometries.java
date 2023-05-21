@@ -11,7 +11,7 @@ import primitives.Ray;
  * @author linoy and tamar
  *
  */
-public class Geometries implements Intersectable
+public class Geometries extends Intersectable
 {
 	private List<Intersectable> intersections;
 	
@@ -46,14 +46,14 @@ public class Geometries implements Intersectable
       @param ray The ray to find the intersection points with.
       @return A list of intersection points, or null if there are no intersections.
 	*/
-    public List<Point> findIntersections(Ray ray)
+    public List<GeoPoint> findGeoIntersectionsHelper(Ray ray)
     {
        // create list of points
-       List<Point> points = null;
+       List<GeoPoint> points = null;
        //find intersections for each shape in geometries
        for(Intersectable shape: intersections)
          {
-    	  List<Point> temPoints = shape.findIntersections(ray);
+    	  List<GeoPoint> temPoints = shape.findGeoIntersections(ray);
     	   if(temPoints != null)
     	   {
     		   if(points == null)

@@ -31,7 +31,8 @@ public class Triangle extends Polygon
   @param ray The ray to intersect with the triangle.
   @return A list of intersection points between the ray and the triangle, or null if there are no intersections.
   */
-  public List<Point> findIntersections(Ray ray)
+  @Override
+  public List<GeoPoint> findGeoIntersectionsHelper(Ray ray)
   {
 	  Point p = ray.getP0();
 	  Vector v = ray.getDir();
@@ -50,9 +51,11 @@ public class Triangle extends Polygon
      // calculate the dot products of the ray direction with the three normals
       if((d1>0 && d2>0 && d3>0) || (d1<0 && d2<0 && d3<0))
       {
-    	  List<Point> list = plane.findIntersections(ray);
-    	  if (list != null)
-    		  return list;
+    	  List<GeoPoint> list = plane.findGeoIntersections(ray);
+    	  if (list != null) {
+    		 Point intersectPoint = list.get(0).point;
+    	     return List.of((new GeoPoint(this, intersectPoint)));
+    	  }
       }
 	  return null;
   }

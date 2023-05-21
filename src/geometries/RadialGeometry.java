@@ -5,7 +5,7 @@ package geometries;
   * @author Tamar and Linoy
   *
   */
-public abstract class RadialGeometry implements Geometry
+public abstract class RadialGeometry extends Geometry
 {
 	/**
 	 * the field represent radius in a shape

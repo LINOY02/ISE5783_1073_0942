@@ -11,7 +11,7 @@ import primitives.Vector;
  * @author Tamar and Linoy
  *
  */
-public class Plane implements Geometry
+public class Plane extends Geometry
 {
 	/**
 	 * A point on the plane
@@ -67,7 +67,8 @@ public class Plane implements Geometry
      @param ray The ray to find the intersection point with.
      @return A list containing the intersection point, or null if there is no intersection.
 	*/
-	 public List<Point> findIntersections(Ray ray)
+	@Override
+	 public List<GeoPoint> findGeoIntersectionsHelper(Ray ray)
 	 {
 		 Point p = ray.getP0();
 		 Vector v = ray.getDir();
@@ -82,7 +83,7 @@ public class Plane implements Geometry
          if (t > 0)
          {
         	 Point point = ray.getPoint(t);
-        	 return List.of(point);
+        	 return List.of(new GeoPoint(this, point));
          }
       // If there is no intersection point
 		  return null;
