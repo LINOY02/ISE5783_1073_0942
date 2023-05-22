@@ -148,8 +148,9 @@ public class Camera
 	/**
 	 * Renders an image by casting rays through each pixel and calculating the color of the closest intersection.
 	 * Throws a MissingResourceException if any required resources are missing.
+	 * @return this object
 	 */
-	public void renderImage()
+	public Camera renderImage()
 	{
 		// check if some of the parameters are missing
 		if(p0 == null)
@@ -179,6 +180,7 @@ public class Camera
 				    imageWriter.writePixel(i, j, castRay(imageWriter.getNx(), imageWriter.getNy(), j, i));
 			}
 		}
+		return this;
 	}
 
 	/**

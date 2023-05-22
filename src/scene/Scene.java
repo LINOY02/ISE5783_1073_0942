@@ -2,6 +2,10 @@ package scene;
 
 import primitives.*;
 import lighting.*;
+
+import java.util.LinkedList;
+import java.util.List;
+
 import geometries.*;
 
 public class Scene {
@@ -10,6 +14,7 @@ public class Scene {
 	public Color background = Color.BLACK;
 	public AmbientLight ambientLight = AmbientLight.NONE;
 	public Geometries geometries = new Geometries();
+	public List<LightSource> lights = new LinkedList<>();
 	/**
 	 * constructor with one param
 	 * @param name
@@ -48,6 +53,12 @@ public class Scene {
 		this.geometries = geometries;
 		return  this;
 	}
+
+
+public Scene setLights(List<LightSource> lights) {
+	this.lights = lights;
+	return this;
+}
 	
 	
 }
