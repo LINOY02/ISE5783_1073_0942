@@ -6,7 +6,7 @@ import primitives.Vector;
 import primitives.*;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static primitives.Util.isZero;
+import static primitives.Util.*;
 
 import java.util.MissingResourceException;
 /**

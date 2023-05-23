@@ -73,11 +73,11 @@ public class Plane extends Geometry
 		 Point p = ray.getP0();
 		 Vector v = ray.getDir();
 		 Vector n = getNormal();
-		 double nv = n.dotProduct(v);
+		 double nv = alignZero(n.dotProduct(v));
 		 if (isZero(nv) || p0.equals(p)) //Checking if the beam is parallel to the plane or if it starts at the same point as the plane
 			 return null;
 		// Calculate the distance from the ray's starting point to the intersection point with this plane
-		 double tmp = n.dotProduct(p0.subtract(p));
+		 double tmp = alignZero(n.dotProduct(p0.subtract(p)));
 		 double t = alignZero(tmp / nv);
 		// If the intersection point is in front of the camera return it
          if (t > 0)

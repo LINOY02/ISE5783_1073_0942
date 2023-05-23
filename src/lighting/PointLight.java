@@ -3,6 +3,7 @@ package lighting;
 import primitives.Color;
 import primitives.Point;
 import primitives.Vector;
+import static primitives.Util.*;
 
 /**
  * The PointLight class represents a point light source in a 3D scene.
@@ -32,8 +33,7 @@ public class PointLight extends Light implements LightSource
 
 	@Override
 	public Color getIntensity(Point p) {
-		double d = position.distance(p); // the distance between the points
-		return getIntensity().scale(1/(Kc + Kl*d + Kq*d*d)); // calculate by The light propagation model
+		return getIntensity().scale(alignZero(1/(Kc + Kl*position.distance(p) + Kq*position.distanceSquared(p)))); // calculate by The light propagation model
 	}
 
 	@Override
@@ -69,6 +69,12 @@ public class PointLight extends Light implements LightSource
 	public PointLight setKq(double kQ) {
 		this.Kq = kQ;
 		return this;
+	}
+
+	@Override
+	public double getDistance(Point point) {
+		// TODO Auto-generated method stub
+		return point.distance(position);
 	}
 
 }

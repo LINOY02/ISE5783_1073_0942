@@ -17,6 +17,9 @@ import scene.Scene;
  */
 public class RayTracerBasic extends RayTracerBase
 {
+	
+	private static final double DELTA = 0.1;
+	
     /**
      * constructor with one param
      * @param scene
@@ -79,14 +82,17 @@ public class RayTracerBasic extends RayTracerBase
 		   Vector l = lightSource.getL(gp.point);
 		   double nl = alignZero(n.dotProduct(l));
 		   if (nl * nv > 0)
-		   { // sign(nl) == sing(nv)
-		       Color iL = lightSource.getIntensity(gp.point);
-		       // Calculate the diffuse component of the material
-		       color = color.add(iL.scale(calcDiffusive(material, nl)),
-		       // Calculate the specular component of the material
-		       iL.scale(calcSpecular(material, n, l, nl, v)));
+		   {// sign(nl) == sing(nv)
+		      if (unshaded(gp, l, n, nl, lightSource))
+		         { 
+		           Color iL = lightSource.getIntensity(gp.point);
+		           // Calculate the diffuse component of the material
+		           color = color.add(iL.scale(calcDiffusive(material, nl)),
+		           // Calculate the specular component of the material
+		           iL.scale(calcSpecular(material, n, l, nl, v)));
+                  }
+		         }
 		   }
-		}
 		return color;
 	}
  
@@ -116,6 +122,25 @@ public class RayTracerBasic extends RayTracerBase
 		// Calculate the reflection vector using the surface normal, light direction, and dot product
 		Vector r = l.subtract(n.scale(nl*2)).normalize();
 		// Calculate the specular reflection coefficient of the material and scale by the specular coefficient of the material
-		return mat.Ks.scale(Math.pow(Math.max(0, v.scale(-1).dotProduct(r)), mat.nShininess));
+		return mat.Ks.scale(Math.pow(Math.max(0, alignZero(v.scale(-1).dotProduct(r))), mat.nShininess));
+	}
+	
+	
+	private boolean unshaded(GeoPoint gp, Vector l, Vector n, double  nl, LightSource light)
+	{
+		Vector lightDirection = l.scale(-1);
+		Vector epsVector = n.scale(nl < 0 ? DELTA : -1*DELTA);
+		Point point = gp.point.add(epsVector);
+        Ray lightRay = new Ray(point, lightDirection);
+        List<GeoPoint> intersections = scene.geometries.findGeoIntersections(lightRay);
+		if (intersections == null)
+			return true;
+		double distance = light.getDistance(point);
+		for (GeoPoint geoPoint : intersections) 
+		{
+			if(light.getDistance(geoPoint.point) < distance)
+				return false;
+		}
+		return true;
 	}
 }
