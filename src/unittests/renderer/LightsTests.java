@@ -1,9 +1,6 @@
 package unittests.renderer;
-
-import static java.awt.Color.*;
-
 import org.junit.jupiter.api.Test;
-
+import static java.awt.Color.*;
 import geometries.*;
 import lighting.*;
 import primitives.*;

@@ -18,7 +18,7 @@ public class Ray
    * the direction of the ray
    */
   final Vector dir;
-  
+  private static final double DELTA = 0.1;
   
   /**
    * Ray constructor with to parameters
@@ -30,6 +30,14 @@ public class Ray
 	  this.p0 = p0;
 	  this.dir = dir.normalize();
   }
+  
+  public Ray(Point p0, Vector dir, Vector n)
+  {
+	  Vector epsVector = n.scale(n.dotProduct(dir) < 0 ? DELTA : -1*DELTA);
+	  this.p0 = p0.add(epsVector);
+	  this.dir = dir.normalize();
+  }
+  
   
 @Override
 public boolean equals(Object obj) 
