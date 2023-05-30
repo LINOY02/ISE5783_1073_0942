@@ -33,9 +33,9 @@ public class Ray
   
   public Ray(Point p0, Vector dir, Vector n)
   {
-	  Vector epsVector = n.scale(n.dotProduct(dir) < 0 ? DELTA : -1*DELTA);
-	  this.p0 = p0.add(epsVector);
 	  this.dir = dir.normalize();
+	  Vector epsVector = n.scale(n.dotProduct(this.dir) > 0 ? DELTA : -DELTA);
+	  this.p0 = p0.add(epsVector);
   }
   
   
@@ -87,7 +87,7 @@ public GeoPoint findClosestGeoPoint(List<GeoPoint> points)
 	double dis = Double.MAX_VALUE;
 	double tempDis;
 	
-	if(points.isEmpty()) //check if the list is empty
+	if(points.isEmpty()|| points == null) //check if the list is empty
 		return null;
 	
 	for (GeoPoint gPoint : points) //going through all the points in the list

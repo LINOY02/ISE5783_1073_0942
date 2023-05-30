@@ -36,8 +36,10 @@ public class Geometries extends Intersectable
 	@param geometries One or more intersectable geometries to add to this Geometries object.
 	*/
 
-	public void add(Intersectable... geometries) {
-		Collections.addAll(intersections, geometries);
+	public void add(Intersectable... geometries) 
+	{
+		if(geometries != null)
+		    Collections.addAll(intersections, geometries);
 	}
 	
 	

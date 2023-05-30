@@ -18,7 +18,7 @@ import scene.Scene;
  */
 public class RayTracerBasic extends RayTracerBase
 {
-	private static final Double3 INITIAL_K = new Double3(1.0);
+	private static final Double3 INITIAL_K = Double3.ONE;
 	private static final int MAX_CALC_COLOR_LEVEL = 10;
 	private static final double MIN_CALC_COLOR_K = 0.001;
 		
@@ -42,6 +42,8 @@ public class RayTracerBasic extends RayTracerBase
 	public Color traceRay(Ray ray) 
 	{
 		GeoPoint closestPoint = findClosestIntersection(ray);
+		if (closestPoint == null)
+			return scene.background;
 		return calcColor(closestPoint, ray);// call the function that return the color of the point
 	}
 
@@ -109,9 +111,10 @@ public class RayTracerBasic extends RayTracerBase
 	
 	private Ray constructReflectedRay(Vector normal, Point point, Vector v)
 	{
-		if (isZero(v.dotProduct(normal)))
-            return new Ray(point, v);
-		Vector r = v.subtract(normal.scale(v.dotProduct(normal)*2)).normalize();
+		double nv = alignZero(normal.dotProduct(v));
+		if (isZero(nv))
+            return null;
+		Vector r = v.subtract(normal.scale(nv*2));
 		return new Ray(point, r, normal);
 	}
 	
@@ -119,25 +122,26 @@ public class RayTracerBasic extends RayTracerBase
 	        return new Ray(point, vector, normal);
 	    }
 	
+
 	private Color calcGlobalEffects(GeoPoint gp, Ray ray, int level, Double3 k) 
-	{
-		Color color = Color.BLACK;
-		Ray reflectedRay = constructReflectedRay(gp.geometry.getNormal(gp.point), gp.point, ray.getDir());
-		GeoPoint reflectedPoint = findClosestIntersection(reflectedRay);
-		Double3 kr = gp.geometry.getMaterial().Kr, kkr = kr.product(k);
-		if (kkr.lowerThan(MIN_CALC_COLOR_K))
-		{
-			color = color.add(calcColor(reflectedPoint, reflectedRay, level - 1, kkr).scale(kr));
-		}
-		Ray refractedRay = constructRefractedRay(gp.geometry.getNormal(gp.point), gp.point, ray.getDir());
-		GeoPoint refractedPoint = findClosestIntersection(refractedRay);
-		Double3 kt = gp.geometry.getMaterial().Kt, kkt = kt.product(k);
-		if (kkt.lowerThan(MIN_CALC_COLOR_K)) 
-		{
-			color = color.add(calcColor(refractedPoint, refractedRay, level - 1, kkt).scale(kt));
-		}
-		return color;
-		}
+	{ 
+		Color color= Color.BLACK; 
+	    Vector v = ray.getDir(); 
+	    Vector n = gp.geometry.getNormal(gp.point); 
+	    Material material= gp.geometry.getMaterial(); 
+	    return calcGlobalEffect(constructReflectedRay(n, gp.point, v), level, k, material.Kr) 
+	    		.add(calcGlobalEffect(constructRefractedRay(n, gp.point, v), level, k, material.Kt)); 
+	} 
+	private Color calcGlobalEffect(Ray ray, int level, Double3 k, Double3 kx) 
+	{ 
+		Double3 kkx= k.product(kx);
+		if (kkx.lowerThan(MIN_CALC_COLOR_K)) 
+			return Color.BLACK; 
+		GeoPoint gp= findClosestIntersection(ray); 
+		if (gp == null) 
+			return scene.background.scale(kx); 
+		return isZero(gp.geometry.getNormal(gp.point).dotProduct(ray.getDir())) ? Color.BLACK: calcColor(gp, ray, level - 1, kkx); 
+    }
  
 	/**
 	 * Calculates the diffuse component of the material.
@@ -193,10 +197,10 @@ public class RayTracerBasic extends RayTracerBase
 		// Check if any of the intersections are closer to the light source than the shifted point
 		for (GeoPoint geoPoint : intersections) 
 		{
-			if(light.getDistance(geoPoint.point) < distance)
+			if(alignZero(geoPoint.point.distance(gp.point)) <= distance && geoPoint.geometry.getMaterial().Kt.equals(Double3.ZERO))
 				return false;
 		}
 		return true;
 	}
-
+	
 }

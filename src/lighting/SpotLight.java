@@ -1,5 +1,7 @@
 package lighting;
 
+import java.security.NoSuchProviderException;
+
 import org.junit.experimental.max.MaxCore;
 
 import primitives.Color;
@@ -34,6 +36,10 @@ public class SpotLight extends PointLight
 		return super.getIntensity(p).scale(scalar);// mult the scalar with the result with the point light
 	}
 
-	
+	@Override
+	public double getDistance(Point point) {
+		// TODO Auto-generated method stub
+		return super.getDistance(point);
+	}
 
 }
