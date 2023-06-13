@@ -46,6 +46,11 @@ public class RayTracerBasic extends RayTracerBase
 			return scene.background;
 		return calcColor(closestPoint, ray);// call the function that return the color of the point
 	}
+	
+	private Color calcColor(GeoPoint gp, Ray ray) 
+	{
+		return calcColor(gp, ray, MAX_CALC_COLOR_LEVEL, INITIAL_K).add(scene.ambientLight.getIntensity());
+	}
 
 	/**
 	 * Calculates the color of a point in the scene based on the ambient light present.
@@ -54,21 +59,18 @@ public class RayTracerBasic extends RayTracerBase
 	 */
 	private Color calcColor(GeoPoint point, Ray ray, int level, Double3 k)
 	{
-		Color color = calcLocalEffects(point,ray);
+		Color color = calcLocalEffects(point,ray, k);
 	    return 1 == level ? color : color.add(calcGlobalEffects(point, ray, level, k));
 	}
 	
-	private Color calcColor(GeoPoint gp, Ray ray) 
-	{
-		return calcColor(gp, ray, MAX_CALC_COLOR_LEVEL, INITIAL_K).add(scene.ambientLight.getIntensity());
-	}
+
 	/**
 	 * Calculates the local effects of the given geometric point and ray.
 	 * @param gp The geometric point for which to calculate the local effects.
 	 * @param ray The ray used for the calculation.
 	 * @return The resulting color after applying the local effects.
 	 */
-	private Color calcLocalEffects(GeoPoint gp, Ray ray) 
+	private Color calcLocalEffects(GeoPoint gp, Ray ray, Double3 k) 
 	{
 		// Get the emission color of the geometry at the geometric point
 		Color color = gp.geometry.getEmission();
@@ -90,9 +92,10 @@ public class RayTracerBasic extends RayTracerBase
 		   double nl = alignZero(n.dotProduct(l));
 		   if (nl * nv > 0)
 		   {// sign(nl) == sing(nv)   
-		      if (unshaded(gp, l, n, nl, lightSource))
+			  Double3 ktr = transparency(gp, lightSource, l, n);
+		      if (!ktr.product(k).lowerThan(MIN_CALC_COLOR_K))
 		         { 
-		           Color iL = lightSource.getIntensity(gp.point);
+		           Color iL = lightSource.getIntensity(gp.point).scale(ktr);
 		           // Calculate the diffuse component of the material
 		           color = color.add(iL.scale(calcDiffusive(material, nl)),iL.scale(calcSpecular(material, n, l, nl, v)));
 		           // Calculate the specular component of the material 
@@ -140,7 +143,7 @@ public class RayTracerBasic extends RayTracerBase
 		GeoPoint gp= findClosestIntersection(ray); 
 		if (gp == null) 
 			return scene.background.scale(kx); 
-		return isZero(gp.geometry.getNormal(gp.point).dotProduct(ray.getDir())) ? Color.BLACK: calcColor(gp, ray, level - 1, kkx); 
+		return isZero(gp.geometry.getNormal(gp.point).dotProduct(ray.getDir())) ? Color.BLACK: calcColor(gp, ray, level - 1, kkx).scale(kx); 
     }
  
 	/**
@@ -181,7 +184,7 @@ public class RayTracerBasic extends RayTracerBase
 	 * @param light     The light source.
 	 * @return          {@code true} if the point is unshaded, {@code false} otherwise.
 	 */
-	private boolean unshaded(GeoPoint gp, Vector l, Vector n, double nl, LightSource light)
+	/*private boolean unshaded(GeoPoint gp, Vector l, Vector n, double nl, LightSource light)
 	{
 		// Invert the light direction to point from the point to the light source
 		Vector lightDirection = l.scale(-1);
@@ -201,6 +204,36 @@ public class RayTracerBasic extends RayTracerBase
 				return false;
 		}
 		return true;
+	}*/
+	
+	private Double3 transparency(GeoPoint gp, LightSource light, Vector l, Vector n)
+
+	{
+		// Invert the light direction to point from the point to the light source
+		Vector lightDirection = l.scale(-1);
+		// Create a ray from the shifted point to the light source
+        Ray lightRay = new Ray(gp.point, lightDirection, n);
+        // Find the intersections between the ray and the geometries in the scene
+        List<GeoPoint> intersections = scene.geometries.findGeoIntersections(lightRay);
+        // there is no intresction
+		if (intersections == null)
+			return Double3.ONE;
+		// the distance between the light and the point
+		double distance = light.getDistance(gp.point);
+		Double3 ktr = Double3.ONE;
+		// Check if any of the intersections are closer to the light source than the shifted point
+		for (GeoPoint geoPoint : intersections) 
+		{
+			if(alignZero(geoPoint.point.distance(gp.point)) <= distance)
+				{
+				ktr = ktr.product(geoPoint.geometry.getMaterial().Kt);
+				if(ktr.lowerThan(MIN_CALC_COLOR_K))
+					return Double3.ZERO;
+				}
+			
+		}
+		return ktr;
 	}
+	
 	
 }
