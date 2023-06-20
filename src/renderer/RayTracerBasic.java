@@ -23,14 +23,16 @@ public class RayTracerBasic extends RayTracerBase
 	private static final Double3 INITIAL_K = Double3.ONE;
 	private static final int MAX_CALC_COLOR_LEVEL = 10;
 	private static final double MIN_CALC_COLOR_K = 0.001;
+	private int numOfRays = 1;
 		
 	
     /**
      * constructor with one param
      * @param scene
      */
-	public RayTracerBasic(Scene scene) {
+	public RayTracerBasic(Scene scene, int numOfRays) {
 		super(scene);// call the ctor of the father
+		this.numOfRays = numOfRays;
 		// TODO Auto-generated constructor stub
 	}
 
@@ -208,7 +210,7 @@ public class RayTracerBasic extends RayTracerBase
 		return true;
 	}*/
 	
-	private Double3 transparency(GeoPoint gp, LightSource light, Vector l, Vector n)
+	/*private Double3 transparency(GeoPoint gp, LightSource light, Vector l, Vector n)
 
 	{
 		// Invert the light direction to point from the point to the light source
@@ -235,7 +237,7 @@ public class RayTracerBasic extends RayTracerBase
 			
 		}
 		return ktr;
-	}
+	}*/
 	
 	
 	/**
@@ -243,23 +245,24 @@ public class RayTracerBasic extends RayTracerBase
 	 * function that creates Partial shading in case the body or bodies that block
 	 * the light source from the point have transparency at some level or another
 	 * 
+	 * @param gp- the point in the geometry
 	 * @param light
 	 * @param l         -the vector from the light to the point
 	 * @param n-        normal vector to the point at the geometry
-	 * @param geopoint- the point in the geometry
 	 * @return double number represent the shadow
 	 */
-	private Double3 transparency (GeoPoint geoPoint, LightSource lightSource, Vector l, Vector n, int numberOfRays) {
+	private Double3 transparency (GeoPoint gp, LightSource light, Vector l, Vector n) {
 		Double3 sum = Double3.ZERO;// sum of ktr - Coefficients
-		List<Ray> rays = constructRaysToLight(lightSource, l, n, geoPoint, numberOfRays);// create numberOfRays rays
-		for (Ray ray : rays) { // for each ray
+		List<Ray> beams = constructRaysToLight(light, l, n, gp);// create numberOfRays rays
+		for (Ray ray : beams) { // for each ray
 			List<GeoPoint> intersections = scene.geometries.findGeoIntersections(ray);// calculate Intersections
 			if (intersections != null)// there are intersections
 			{
-				double lightDistance = lightSource.getDistance(geoPoint.point);
+				double distance = light.getDistance(gp.point);
 				Double3 ktr = Double3.ONE;
-				for (GeoPoint gp : intersections) {
-					if (alignZero(gp.point.distance(geoPoint.point) - lightDistance) <= 0) {
+				for (GeoPoint geoPoint : intersections) {
+					if (alignZero(geoPoint.point.distance(gp.point)) <= distance) 
+					{
 						//negative when the intersection point is before(from the object view) the light source
 						ktr = ktr.product(geoPoint.geometry.getMaterial().Kt);
 						if (ktr.lowerThan(MIN_CALC_COLOR_K))// if we got to the minimum value of k- stop the recursion
@@ -271,19 +274,29 @@ public class RayTracerBasic extends RayTracerBase
 					// else -> the intersection point is after(from the object view) the light
 					// source, there is no shadow
 				}
-				sum.add(ktr);
-			} else// no intersections
+				sum = sum.add(ktr);
+			} 
+			else// no intersections
 			{
-				sum.add(Double3.ONE);
+				sum = sum.add(Double3.ONE);
 			}
 		}
-		return sum.reduce(rays.size());// Average of Coefficients
+		return sum.reduce(beams.size());// Average of Coefficients
 	}
 
 	
 	
-	
-	private List<Ray> constructRaysToLight(LightSource light, Vector l, Vector n, GeoPoint geopoint, int numberOfRays) {
+	/**
+
+	Constructs a list of rays from a given point towards a light source.
+
+	@param light The light source
+    @param l Vector representing the direction from the point to the light source
+    @param n Normal vector at the integration point
+    @param geopoint The integration point on the object's surface
+    @return A list of rays from the integration point towards the light source
+	*/
+	private List<Ray> constructRaysToLight(LightSource light, Vector l, Vector n, GeoPoint geopoint) {
 		Vector lightDirection = l.scale(-1); // from point to light source
 		Ray lightRay = new Ray(geopoint.point, lightDirection, n);
 		List<Ray> beam = new LinkedList<>();// create list of rays
@@ -301,7 +314,7 @@ public class RayTracerBasic extends RayTracerBase
 			 pC =p0;
 		else
 		     pC = lightRay.getPoint(distance);// calculate the center point of the light
-		for (int i = 0; i < numberOfRays - 1; i++) 
+		for (int i = 0; i < numOfRays - 1; i++) 
 		{
 		// create random polar system coordinates of a point in circle of radius r
 		double cosTeta = ThreadLocalRandom.current().nextDouble(-1, 1);

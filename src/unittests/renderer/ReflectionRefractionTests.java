@@ -29,7 +29,7 @@ public class ReflectionRefractionTests {
    private Scene scene = new Scene("Test scene");
 
    /** Produce a picture of a sphere lighted by a spot light */
-   /*@Test
+  /* @Test
    public void twoSpheres() {
       Camera camera = new Camera(new Point(0, 0, 1000), new Vector(0, 0, -1), new Vector(0, 1, 0)) //
          .setVPSize(150, 150).setVPDistance(1000);
@@ -40,7 +40,7 @@ public class ReflectionRefractionTests {
                            new Sphere(25d, new Point(0, 0, -50)).setEmission(new Color(RED)) //
                               .setMaterial(new Material().setKd(0.5).setKs(0.5).setShininess(100)));
       scene.lights.add( //
-                       new SpotLight(new Color(1000, 600, 0),100.0, new Point(-100, -100, 500), new Vector(-1, -1, -2)) //
+                       new SpotLight(new Color(1000, 600, 0),1000.0, new Point(-100, -100, 500), new Vector(-1, -1, -2)) //
                           .setKl(0.0004).setKq(0.0000006));
 
       camera.setImageWriter(new ImageWriter("refractionTwoSpheres", 500, 500)) //
@@ -50,7 +50,7 @@ public class ReflectionRefractionTests {
    }*/
 
    /** Produce a picture of a sphere lighted by a spot light */
-  /* @Test
+   @Test
    public void twoSpheresOnMirrors() {
       Camera camera = new Camera(new Point(0, 0, 10000), new Vector(0, 0, -1), new Vector(0, 1, 0)) //
          .setVPSize(2500, 2500).setVPDistance(10000); //
@@ -72,7 +72,7 @@ public class ReflectionRefractionTests {
                               .setEmission(new Color(20, 20, 20)) //
                               .setMaterial(new Material().setKr(new Double3(0.5, 0, 0.4))));
 
-      scene.lights.add(new SpotLight(new Color(1020, 400, 400),100.0, new Point(-750, -750, -150), new Vector(-1, -1, -4)) //
+      scene.lights.add(new SpotLight(new Color(1020, 400, 400),5.0, new Point(-750, -750, -150), new Vector(-1, -1, -4)) //
          .setKl(0.00001).setKq(0.000005));
 
       ImageWriter imageWriter = new ImageWriter("reflectionTwoSpheresMirrored", 500, 500);
@@ -80,7 +80,7 @@ public class ReflectionRefractionTests {
          .setRayTracer(new RayTracerBasic(scene)) //
          .renderImage() //
          .writeToImage();
-   }*/
+   }
 
    /** Produce a picture of a two triangles lighted by a spot light with a
     * partially
@@ -101,7 +101,7 @@ public class ReflectionRefractionTests {
                            new Sphere(30d, new Point(60, 50, -50)).setEmission(new Color(BLUE)) //
                               .setMaterial(new Material().setKd(0.2).setKs(0.2).setShininess(30).setKt(0.6)));
 
-      scene.lights.add(new SpotLight(new Color(700, 400, 400),100.0, new Point(60, 50, 0), new Vector(0, 0, -1)) //
+      scene.lights.add(new SpotLight(new Color(700, 400, 400),5.0, new Point(60, 50, 0), new Vector(0, 0, -1)) //
          .setKl(4E-5).setKq(2E-7));
 
       ImageWriter imageWriter = new ImageWriter("refractionShadow", 600, 600);
@@ -189,7 +189,7 @@ public class ReflectionRefractionTests {
 	                              
 	      );
 	      scene.lights.add( //
-	                       new SpotLight(new Color(700, 400, 400),100.0, new Point(40, 40, 115), new Vector(-1, -1, -4)) //
+	                       new SpotLight(new Color(700, 400, 400),5.0, new Point(40, 40, 115), new Vector(-1, -1, -4)) //
 	                          .setKl(4E-4).setKq(2E-5));
 	     /*** scene.lights.add( //
                   new DirectionalLight(new Color(100, 600, 0), new Vector(-1, -1, -2))); //**/

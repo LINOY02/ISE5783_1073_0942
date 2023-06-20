@@ -31,16 +31,6 @@ public class SpotLight extends PointLight
 	}
 	
 	
-	/**
-     * Constructs a new SpotLight object with the specified intensity, position, and direction.
-     * @param intensity The color intensity of the light.
-     * @param position  The position of the light source.
-     * @param direction The direction of the spotlight beam.
-     */
-	public SpotLight(Color intensity, Point position, Vector direction) {
-		super(intensity, position);
-		this.direction = direction;
-	}
 	
 	@Override
 	public Color getIntensity(Point p) {

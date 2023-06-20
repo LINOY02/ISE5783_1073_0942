@@ -14,14 +14,6 @@ abstract class Light
 	private Color intensity;
 	private double radius = 0;//the radius of the light
 	
-	/**
-     * Constructs a new Light object with the specified intensity.
-     * @param intensity The color intensity of the light.
-     */
-	protected Light(Color intensity)
-	{
-		this.intensity = intensity;
-	}
 
 	
 	/**
@@ -32,6 +24,11 @@ abstract class Light
 	{
 		this.intensity = intensity;
 		this.radius = radius;
+	}
+	
+	protected Light(Color intensity)
+	{
+		this.intensity = intensity;
 	}
 
 	
