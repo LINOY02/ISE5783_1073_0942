@@ -30,12 +30,19 @@ public class RayTracerBasic extends RayTracerBase
      * constructor with one param
      * @param scene
      */
-	public RayTracerBasic(Scene scene, int numOfRays) {
+	public RayTracerBasic(Scene scene) {
 		super(scene);// call the ctor of the father
-		this.numOfRays = numOfRays;
 		// TODO Auto-generated constructor stub
 	}
 
+	
+	public RayTracerBasic setNumOfRadius(int numOfRays)
+	{
+		this.numOfRays = numOfRays;
+		return this;
+	}
+	
+	
 	
 	/**
 	 * Traces a ray through the scene and calculates the color at the point where the ray intersects with an object.

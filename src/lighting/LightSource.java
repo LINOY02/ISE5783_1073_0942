@@ -36,5 +36,7 @@ public interface LightSource
 	 * @return the radius of the light
 	 */
 	double getRadius();
-
+	
+	
+	
 }

@@ -28,7 +28,7 @@ class softShadowTests {
 		      scene.setAmbientLight(new AmbientLight(new Color(WHITE), 0.15)).setBackground(new Color(0, 200, 255));
 		      Camera camera= new Camera(new Point(0, 0, 1000), new Vector(0, 0, -1), new Vector(0, 1, 0))//
 		    	      .setVPSize(200, 200).setVPDistance(1000) //
-		    	      .setRayTracer(new RayTracerBasic(scene,1));
+		    	      .setRayTracer(new RayTracerBasic(scene).setNumOfRadius(1));
 		      scene.geometries.add( //
 		                           new Triangle(new Point(-170, -170, -115), new Point(140, -170, -135), new Point(90, 25, -150)) //
 		                              .setMaterial(new Material().setKs(0.8).setShininess(60)).setEmission(new Color(140, 70, 20)), //
@@ -76,7 +76,7 @@ class softShadowTests {
 		      scene.setAmbientLight(new AmbientLight(new Color(WHITE), 0.15)).setBackground(new Color(0, 200, 255));
 		      Camera camera= new Camera(new Point(0, 0, 1000), new Vector(0, 0, -1), new Vector(0, 1, 0))//
 		    	      .setVPSize(200, 200).setVPDistance(1000) //
-		    	      .setRayTracer(new RayTracerBasic(scene,30));
+		    	      .setRayTracer(new RayTracerBasic(scene).setNumOfRadius(30));
 		      scene.geometries.add( //
 		                           new Triangle(new Point(-170, -170, -115), new Point(140, -170, -135), new Point(90, 25, -150)) //
 		                              .setMaterial(new Material().setKs(0.8).setShininess(60)).setEmission(new Color(140, 70, 20)), //

@@ -32,6 +32,8 @@ abstract class Light
 	}
 
 	
+	
+	
 	/**
      * @return The intensity of the light.
      */
