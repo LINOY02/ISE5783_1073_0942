@@ -1,12 +1,13 @@
 package renderer;
 import static primitives.Util.*;
+
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.script.AbstractScriptEngine;
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane.IconifyAction;
 
 import geometries.Intersectable.GeoPoint;
-
 import primitives.*;
 import lighting.*;
 import static primitives.Util.alignZero;
@@ -234,6 +235,41 @@ public class RayTracerBasic extends RayTracerBase
 		}
 		return ktr;
 	}
+	
+	private List<Ray> constructRaysToLight(LightSource light, Vector l, Vector n, GeoPoint geopoint, int numberOfRays) {
+		Vector lightDirection = l.scale(-1); // from point to light source
+		Ray lightRay = new Ray(geopoint.point, lightDirection, n);
+		List<Ray> beam = new LinkedList<>();
+		beam.add(lightRay);
+		if (light.getDistance(geopoint.point) == 0)////////////////////////////////////////////////////////////////////////
+		return beam;
+		Point p0 = lightRay.getP0();
+		Vector v = lightRay.getDir();
+		//Vector vx = (new Vector(-v.getHead().getY(), v.getHead().getX(), 0)).normalized();// (-y,x,0)
+		Vector vx=v.OrthogonalVector();
+		Vector vy = (v.crossProduct(vx)).normalize();
+		double r = light.getDistance(geopoint.point);////////////////////////////////////////////////////////////////////////////////////////
+		Point pC = lightRay.getPoint(light.getDistance(p0));
+		for (int i = 0; i < numberOfRays - 1; i++) {
+		// create random polar system coordinates of a point in circle of radius r
+		double cosTeta = ThreadLocalRandom.current().nextDouble(-1, 1);
+		double sinTeta = Math.sqrt(1 - cosTeta * cosTeta);
+		double d = ThreadLocalRandom.current().nextDouble(0, r);
+		// Convert polar coordinates to Cartesian ones
+		double x = d * cosTeta;
+		double y = d * sinTeta;
+		// pC - center of the circle
+		// p0 - start of central ray, v - its direction, distance - from p0 to pC
+		Point point = pC;
+		if (!Util.isZero(x))
+		point = point.add(vx.scale(x));
+		if (!Util.isZero(y))
+		point = point.add(vy.scale(y));
+		beam.add(new Ray(p0, point.subtract(p0))); // normalized inside Ray ctor
+		}
+		return beam;
+
+		}
 	
 	
 }
