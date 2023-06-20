@@ -26,11 +26,23 @@ public class PointLight extends Light implements LightSource
      * @param intensity The color intensity of the light.
      * @param position  The position of the light source.
      */
+	public PointLight(Color intensity,Double radius, Point position) {
+		super(intensity,radius);
+		this.position = position;
+	}
+
+	
+	/**
+     * Constructs a new PointLight object with the specified intensity and position.
+     * @param intensity The color intensity of the light.
+     * @param position  The position of the light source.
+     */
 	public PointLight(Color intensity, Point position) {
 		super(intensity);
 		this.position = position;
 	}
 
+	
 	@Override
 	public Color getIntensity(Point p) {
 		return getIntensity().scale(alignZero(1/(Kc + Kl*position.distance(p) + Kq*position.distanceSquared(p)))); // calculate by The light propagation model

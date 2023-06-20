@@ -73,7 +73,7 @@ public Vector getDir()
  */
 public Point getPoint(double t)
 {
-	return p0.add(dir.scale(t));
+	return isZero(t) ? p0 :p0.add(dir.scale(t));
 }
 
 /**

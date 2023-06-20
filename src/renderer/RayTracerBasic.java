@@ -3,6 +3,7 @@ import static primitives.Util.*;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.script.AbstractScriptEngine;
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane.IconifyAction;
@@ -236,21 +237,72 @@ public class RayTracerBasic extends RayTracerBase
 		return ktr;
 	}
 	
+	
+	/**
+	 * 
+	 * function that creates Partial shading in case the body or bodies that block
+	 * the light source from the point have transparency at some level or another
+	 * 
+	 * @param light
+	 * @param l         -the vector from the light to the point
+	 * @param n-        normal vector to the point at the geometry
+	 * @param geopoint- the point in the geometry
+	 * @return double number represent the shadow
+	 */
+	private Double3 transparency (GeoPoint geoPoint, LightSource lightSource, Vector l, Vector n, int numberOfRays) {
+		Double3 sum = Double3.ZERO;// sum of ktr - Coefficients
+		List<Ray> rays = constructRaysToLight(lightSource, l, n, geoPoint, numberOfRays);// create numberOfRays rays
+		for (Ray ray : rays) { // for each ray
+			List<GeoPoint> intersections = scene.geometries.findGeoIntersections(ray);// calculate Intersections
+			if (intersections != null)// there are intersections
+			{
+				double lightDistance = lightSource.getDistance(geoPoint.point);
+				Double3 ktr = Double3.ONE;
+				for (GeoPoint gp : intersections) {
+					if (alignZero(gp.point.distance(geoPoint.point) - lightDistance) <= 0) {
+						//negative when the intersection point is before(from the object view) the light source
+						ktr = ktr.product(geoPoint.geometry.getMaterial().Kt);
+						if (ktr.lowerThan(MIN_CALC_COLOR_K))// if we got to the minimum value of k- stop the recursion
+						{
+							ktr = Double3.ZERO;
+							break;// stop the checking for current point
+						}
+					}
+					// else -> the intersection point is after(from the object view) the light
+					// source, there is no shadow
+				}
+				sum.add(ktr);
+			} else// no intersections
+			{
+				sum.add(Double3.ONE);
+			}
+		}
+		return sum.reduce(rays.size());// Average of Coefficients
+	}
+
+	
+	
+	
 	private List<Ray> constructRaysToLight(LightSource light, Vector l, Vector n, GeoPoint geopoint, int numberOfRays) {
 		Vector lightDirection = l.scale(-1); // from point to light source
 		Ray lightRay = new Ray(geopoint.point, lightDirection, n);
-		List<Ray> beam = new LinkedList<>();
+		List<Ray> beam = new LinkedList<>();// create list of rays
 		beam.add(lightRay);
-		if (light.getDistance(geopoint.point) == 0)////////////////////////////////////////////////////////////////////////
-		return beam;
-		Point p0 = lightRay.getP0();
+		if (light.getRadius() == 0) //if the light is one point(no radius) send one ray
+		    return beam;
+		Point p0 = lightRay.getP0();// the start point of the ray (the integration point)
 		Vector v = lightRay.getDir();
-		//Vector vx = (new Vector(-v.getHead().getY(), v.getHead().getX(), 0)).normalized();// (-y,x,0)
-		Vector vx=v.OrthogonalVector();
+		Vector vx= v.OrthogonalVector();
 		Vector vy = (v.crossProduct(vx)).normalize();
-		double r = light.getDistance(geopoint.point);////////////////////////////////////////////////////////////////////////////////////////
-		Point pC = lightRay.getPoint(light.getDistance(p0));
-		for (int i = 0; i < numberOfRays - 1; i++) {
+		double r = light.getRadius();
+		double distance = light.getDistance(p0);
+		Point pC;
+		if(Util.isZero(distance))
+			 pC =p0;
+		else
+		     pC = lightRay.getPoint(distance);// calculate the center point of the light
+		for (int i = 0; i < numberOfRays - 1; i++) 
+		{
 		// create random polar system coordinates of a point in circle of radius r
 		double cosTeta = ThreadLocalRandom.current().nextDouble(-1, 1);
 		double sinTeta = Math.sqrt(1 - cosTeta * cosTeta);
@@ -261,11 +313,13 @@ public class RayTracerBasic extends RayTracerBase
 		// pC - center of the circle
 		// p0 - start of central ray, v - its direction, distance - from p0 to pC
 		Point point = pC;
+		 //move the new point from the center to the random point
 		if (!Util.isZero(x))
-		point = point.add(vx.scale(x));
+		     point = point.add(vx.scale(x));
 		if (!Util.isZero(y))
-		point = point.add(vy.scale(y));
-		beam.add(new Ray(p0, point.subtract(p0))); // normalized inside Ray ctor
+		     point = point.add(vy.scale(y));
+		if(!(Util.isZero(x)&& Util.isZero(y)))
+		     beam.add(new Ray(p0, point.subtract(p0), n)); // normalized inside Ray ctor
 		}
 		return beam;
 
