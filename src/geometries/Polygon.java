@@ -14,8 +14,8 @@ public class Polygon extends Geometry {
    /** List of polygon's vertices */
    protected final List<Point> vertices;
    /** Associated plane in which the polygon lays */
-   protected final Plane       plane;
-   private final int           size;
+   protected final Plane plane;
+   private final int size;
 
    /** Polygon constructor based on vertices list. The list must be ordered by edge
     * path. The polygon must be convex.
@@ -41,19 +41,37 @@ public class Polygon extends Geometry {
       if (vertices.length < 3)
          throw new IllegalArgumentException("A polygon can't have less than 3 vertices");
       this.vertices = List.of(vertices);
-      size          = vertices.length;
+      size = vertices.length;
 
       // Generate the plane according to the first three vertices and associate the
       // polygon with this plane.
       // The plane holds the invariant normal (orthogonal unit) vector to the polygon
-      plane         = new Plane(vertices[0], vertices[1], vertices[2]);
+      plane = new Plane(vertices[0], vertices[1], vertices[2]);
+      if (cbr) 
+      {
+        box = new Border();
+        for (var v : this.vertices) {
+          if (v.getX() < box.minX)
+            box.minX = v.getX();
+          if (v.getY() < box.minY)
+            box.minY = v.getY();
+          if (v.getZ() < box.minZ)
+            box.minZ = v.getZ();
+          if (v.getX() > box.maxX)
+            box.maxX = v.getX();
+          if (v.getY() > box.maxY)
+            box.maxY = v.getY();
+          if (v.getZ() > box.maxZ)
+            box.maxZ = v.getZ();
+        }
+      }
       if (size == 3) return; // no need for more tests for a Triangle
 
-      Vector  n        = plane.getNormal();
+      Vector n = plane.getNormal();
       // Subtracting any subsequent points will throw an IllegalArgumentException
       // because of Zero Vector if they are in the same point
-      Vector  edge1    = vertices[vertices.length - 1].subtract(vertices[vertices.length - 2]);
-      Vector  edge2    = vertices[0].subtract(vertices[vertices.length - 1]);
+      Vector edge1 = vertices[vertices.length - 1].subtract(vertices[vertices.length - 2]);
+      Vector edge2 = vertices[0].subtract(vertices[vertices.length - 1]);
 
       // Cross Product of any subsequent edges will throw an IllegalArgumentException
       // because of Zero Vector if they connect three vertices that lay in the same
@@ -73,7 +91,7 @@ public class Polygon extends Geometry {
          edge1 = edge2;
          edge2 = vertices[i].subtract(vertices[i - 1]);
          if (positive != (edge1.crossProduct(edge2).dotProduct(n) > 0))
-            throw new IllegalArgumentException("All vertices must be ordered and the polygon must be convex");
+        		 throw new IllegalArgumentException("All vertices must be ordered and the polygon must be convex");
       }
    }
 

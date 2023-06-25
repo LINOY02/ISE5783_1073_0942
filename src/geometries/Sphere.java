@@ -27,6 +27,15 @@ public class Sphere extends RadialGeometry
 	{
 		super(radius);
 		this.center = center;
+		if (cbr) {
+			double minX = center.getX() - radius;
+			double maxX = center.getX() + radius;
+			double minY = center.getY() - radius;
+			double maxY = center.getY() + radius;
+			double minZ = center.getZ() - radius;
+			double maxZ = center.getZ() + radius;
+			this.box= new Border(minX, minY, minZ, maxX, maxY, maxZ);
+		}
 	}
 
 	@Override

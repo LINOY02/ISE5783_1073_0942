@@ -3,6 +3,7 @@ import primitives.Point;
 
 import java.util.*;
 import primitives.Vector;
+import renderer.PixelManager.Pixel;
 import primitives.*;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -26,7 +27,9 @@ public class Camera
 	private double distance;
 	private ImageWriter imageWriter;
 	private RayTracerBase rayTracer;
-	
+	private int threadsCount = 10;
+	private double printInterval = 3;
+	private PixelManager pixelManager;
 	
     
 	/**
@@ -150,7 +153,7 @@ public class Camera
 	 * Throws a MissingResourceException if any required resources are missing.
 	 * @return this object
 	 */
-	public Camera renderImage()
+	/**public Camera renderImage()
 	{
 		// check if some of the parameters are missing
 		if(p0 == null)
@@ -181,8 +184,61 @@ public class Camera
 			}
 		}
 		return this;
-	}
+	}*/
 
+	
+	/**
+	   * build for each pixel a ray and get it's color
+	   *
+	   * @return this camera
+	   */
+	  public Camera renderImage() {
+	    if (p0 == null || Vright == null || Vup == null || Vto == null || imageWriter == null || rayTracer == null)
+	      throw new MissingResourceException("missing filed in camera", "", "");
+	    int nx = imageWriter.getNx();
+	    int ny = imageWriter.getNy();
+	    pixelManager = new PixelManager(ny, nx, printInterval);
+	    if (threadsCount == 0)
+	      for (int x = 0; x < nx; x++)
+	        for (int y = 0; y < ny; y++)
+	          castRay(x, y, nx, ny);
+	    else {
+	      var threads = new LinkedList<Thread>(); // list of threads
+	      while (threadsCount-- > 0) // add appropriate number of threads
+	        threads.add(new Thread(() -> { // add a thread with its code
+	          Pixel pixel; // current pixel(row,col)
+	          // allocate pixel(row,col) in loop until there are no more pixels
+	          while ((pixel = pixelManager.nextPixel()) != null)
+	            // cast ray through pixel (and color it – inside castRay)
+	            castRay(pixel.col(), pixel.row(), nx, ny);
+	        }));
+	      // start all the threads
+	      for (var thread : threads)
+	        thread.start();
+	      // wait until all the threads have finished
+	      try {
+	        for (var thread : threads)
+	          thread.join();
+	      } catch (InterruptedException ignore) {
+	      }
+	    }
+	    return this;
+	  }
+	  
+	public Camera setMultiThreading(int threads) {
+	    if (threads < 0)
+	      throw new IllegalArgumentException("number of threads must not be negative");
+	    threadsCount = threads;
+	    return this;
+	  }
+
+	  public Camera setDebugPrint(double interval) {
+	    if (interval < 0)
+	      throw new IllegalArgumentException("print interval must not be negative");
+	    printInterval = interval;
+	    return this;
+	  }
+	
 	/**
 	 * Prints a grid of a given color onto the image. The grid is formed by coloring every nth horizontal and vertical pixel.
 	 * Throws a MissingResourceException if the image writer is missing.
